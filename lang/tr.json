@@ -1,0 +1,22 @@
+{
+    "Toggle navigation": "Gezinmeyi aç\/kapat",
+    "Login": "Giriş yapmak",
+    "Register": "Kayıt ol",
+    "Logout": "Çıkış Yap",
+    "Email Address": "E-posta Adresi",
+    "Password": "Şifre",
+    "Remember Me": "Beni hatırla",
+    "Forgot Your Password?": "Parolanızı mı unuttunuz?",
+    "Name": "İsim",
+    "Confirm Password": "Şifreyi Onayla",
+    "Verify Your Email Address": "Eposta adresinizi doğrulayın",
+    "A fresh verification link has been sent to your email address.": "E-posta adresinize yeni bir doğrulama bağlantısı gönderildi.",
+    "Before proceeding, please check your email for a verification link.": "Devam etmeden önce lütfen bir doğrulama bağlantısı için e-postanızı kontrol edin.",
+    "If you did not receive the email": "E-postayı almadıysanız",
+    "click here to request another": "başka istemek için buraya tıklayın",
+    "Reset Password": "Şifreyi yenile",
+    "Please confirm your password before continuing.": "Lütfen devam etmeden önce şifrenizi onaylayın.",
+    "Send Password Reset Link": "Parola Sıfırlama Bağlantısı Gönder",
+    "Dashboard": "Gösterge Paneli",
+    "You are logged in!": "Giriş yaptınız!"
+}

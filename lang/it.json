@@ -1,0 +1,22 @@
+{
+    "Toggle navigation": "Attiva\/disattiva la navigazione",
+    "Login": "Login",
+    "Register": "Registrati",
+    "Logout": "Disconnettersi",
+    "Email Address": "Indirizzo e-mail",
+    "Password": "Parola d\\'ordine",
+    "Remember Me": "Ricordati di me",
+    "Forgot Your Password?": "Hai dimenticato la password?",
+    "Name": "Nome",
+    "Confirm Password": "Conferma password",
+    "Verify Your Email Address": "Verifica il tuo indirizzo email",
+    "A fresh verification link has been sent to your email address.": "Un nuovo link di verifica è stato inviato al tuo indirizzo email.",
+    "Before proceeding, please check your email for a verification link.": "Prima di procedere, controlla la tua e-mail per un link di verifica.",
+    "If you did not receive the email": "Se non hai ricevuto l\\'e-mail",
+    "click here to request another": "clicca qui per richiederne un altro",
+    "Reset Password": "Resetta la password",
+    "Please confirm your password before continuing.": "Si prega di confermare la password prima di continuare.",
+    "Send Password Reset Link": "Invia collegamento per reimpostare la password",
+    "Dashboard": "Pannello di controllo",
+    "You are logged in!": "Ti sei autenticato!"
+}
