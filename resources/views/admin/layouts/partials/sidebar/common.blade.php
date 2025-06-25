@@ -193,7 +193,7 @@
                                 <!-- Learners Menu -->
                                 <li class="nav-item">
                                     <a href="{{ url('backoffice/learners') }}"
-                                        class="nav-link {{ request()->routeIs('learners.*') ? 'active' : '' }}">
+                                        class="nav-link {{ request()->routeIs('learners.*') ? 'active' : '' }}" id="menu_learners_link">
                                         <i class="nav-icon fas fa-chalkboard-teacher"></i>
                                         <p>Learners</p>
                                     </a>

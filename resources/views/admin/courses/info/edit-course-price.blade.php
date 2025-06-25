@@ -115,7 +115,7 @@
                         </div>
                         {{-- @dd($coursePlan) --}}
                         <label>Apple In-App Purchase</label>
-                        <input type="text" class="form-control" readonly  value="{{ @$renewingSubscriptions->name }}">
+                        <input type="text" class="form-control" name="name" value="{{ @$renewingSubscriptions->name }}">
                       @php
                     //    || ($coursePlan->course_limit==1) || ($coursePlan->is_fixed_date==1)
                     // ($course->default_web_price)|| ($course->default_web_price) || ($course->default_web_price)||
@@ -167,7 +167,7 @@
                         </div> -->
                         <div class="mt-3 plan-modal free one-time  {{  $coursePlan->plan_type == '1' || $coursePlan->plan_type == '0' ? '' : 'd-none' }}">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input limit_course" disabled id="limit_courses" name="limit_course" {{ isset($coursePlan->course_limit) && $coursePlan->course_limit==1 ? 'checked="checked"' : '' }}>
+                                <input type="checkbox" class="form-check-input limit_course"  id="limit_courses" name="limit_course" {{ isset($coursePlan->course_limit) && $coursePlan->course_limit==1 ? 'checked="checked"' : '' }}>
                                 <label class="form-check-label" for="limit_courses">Limit course access duration</label>
                             </div>
                         </div>
@@ -194,7 +194,7 @@
                         <br>
                         <div class="col-md-6 d-inline-flex p-2 mt-5">
                             <div class="form-check fixed-date-picker {{$coursePlan->course_limit == 1 ? '' : 'd-none'}} fixed-date">
-                                <input type="radio" class="form-check-input fixed_date" id="until_fixed_dates" name="fixed_date" {{ isset($coursePlan->is_fixed_date) && $coursePlan->is_fixed_date==1 ? 'checked="checked"' : '' }} disabled value="fixed_date">
+                                <input type="radio" class="form-check-input fixed_date" id="until_fixed_dates" name="fixed_date" {{ isset($coursePlan->is_fixed_date) && $coursePlan->is_fixed_date==1 ? 'checked="checked"' : '' }}  value="fixed_date">
                                 <div class="div123">
                                     <label class="form-check-label" for="until_fixed_dates">Until fixed date</label>
                                 </div>
@@ -221,7 +221,7 @@
                         </div> --}}
                         <div class="col-md-6 d-inline-flex p-2 ">
                             <div class="form-check fixed-date-picker fixed-days {{$coursePlan->course_limit == 1 ? '' : 'd-none'}}">
-                                <input type="radio" class="form-check-input fixed_days" id="fixed_dayss" name="fixed_date" {{ isset($coursePlan->is_fixed_date) && $coursePlan->is_fixed_date==2 ? 'checked="checked"' : '' }} disabled value="fixed_day">
+                                <input type="radio" class="form-check-input fixed_days" id="fixed_dayss" name="fixed_date" {{ isset($coursePlan->is_fixed_date) && $coursePlan->is_fixed_date==2 ? 'checked="checked"' : '' }}  value="fixed_day">
                                 <label class="form-check-label" for="fixed_dayss">Until Specific number of days</label>
                             </div>
                         </div>

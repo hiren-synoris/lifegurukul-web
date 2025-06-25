@@ -415,10 +415,10 @@
                     <div class="col-12 pl-0">
                         <button class="px-4 ml-auto d-block mr-0 btn btn-dark" onclick="event.preventDefault();slideadd();"
                             id="addslide">Add Slide</button><br>
-                        
+
                         <button type="submit" class="btn btn-primary px-4">Save</button>
                     </div>
-                    
+
                 </div>
             </div>
             <input type="text" name="total_slide" id="total_slide" value="{{count($slider->slides()->pluck('id'))}}" style="display: none;"/>

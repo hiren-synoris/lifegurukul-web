@@ -658,7 +658,7 @@ $page = 'index'; ?>
         }
         $about = App\Models\Page::where('slug', 'about-us')->first();
     @endphp
-    @if ($fortestimonial && $about->status)
+    @if ($fortestimonial && $about && $about->status)
         <section class="section become-instructors">
             <div class="container">
                 <div class="row">

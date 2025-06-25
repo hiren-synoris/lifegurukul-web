@@ -991,6 +991,16 @@
                     processing: true,
                     serverSide: true,
                     responsive: true,
+                    stateSave: true,
+                    stateSaveParams: function (settings, data) {
+                        data.search.search = ""; // If you want, can clear search field
+                    },
+                    stateSaveCallback: function (settings, data) {
+                        localStorage.setItem('DataTables_tbl_learners', JSON.stringify(data));
+                    },
+                    stateLoadCallback: function (settings) {
+                        return JSON.parse(localStorage.getItem('DataTables_tbl_learners'));
+                    },
                     ajax: {
                         url: "{{ url('backoffice/get-learner') }}",
                         data: function(d) {
@@ -1021,6 +1031,15 @@
                         // } else {
                         //     $("#main_checkbox").prop("checked", false);
                         // }
+                        var info = table_learner.page.info();
+                        if (info.pages > 0) {
+                            var page = info.page + 1;
+                            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                            if (page > 1) {
+                                newurl += '?page=' + page;
+                            }
+                            window.history.replaceState({}, document.title, newurl);
+                        }
                         $('#loader_section').hide();
                     },
                     columns: [
@@ -1135,6 +1154,7 @@
                         processing: true,
                         serverSide: true,
                         responsive: true,
+                        stateSave: true,
                         ajax: "{{ url('backoffice/get-learner') }}",
                         columnDefs: [{
                             className: 'text-center',
@@ -1574,6 +1594,143 @@
                 }
             })
         });
+        let lastEditedRow = null;
+        let lastExpireText = "";
+        let hasDateChanged = false;
+        $(document).on("click", ".edit_courses", function () {
+            const $editBtn = $(this);
+            const $row = $editBtn.closest("tr");
+            const $expireCell = $row.find("td").eq(2); // Assuming 3rd column has date
+            const $saveBtn = $row.find(".save_courses");
+            if (lastEditedRow && !lastEditedRow.is($row)) {
+                lastEditedRow.find("td").eq(2).text(lastExpireText);
+                lastEditedRow.find(".save_courses").hide();
+                lastEditedRow.find(".edit_courses").show();
+            }
+            lastEditedRow = $row;
+            lastExpireText = $expireCell.text().trim();
+            hasDateChanged = false;
+            $expireCell.html(`<input type="text" class="form-control form-control-sm expire-datepicker" value="${lastExpireText}" />`);
+            const $input = $row.find(".expire-datepicker");
+
+            $input.datepicker({
+                dateFormat: "dd-mm-yy",
+                onSelect: function () {
+                    hasDateChanged = true;
+                }
+            }).datepicker("show");
+            $input.on("blur", function () {
+                setTimeout(() => {
+                    if (!hasDateChanged && lastEditedRow && lastEditedRow.is($row)) {
+                        $expireCell.text(lastExpireText);  // Revert
+                        $saveBtn.hide();
+                        $editBtn.show();
+                        lastEditedRow = null;
+                        lastExpireText = "";
+                    }
+                }, 200);
+            });
+            $editBtn.hide();
+            $saveBtn.show();
+        });
+
+        $(document).on("click", ".save_courses", function () {
+            const $saveBtn = $(this);
+            const $row = $saveBtn.closest("tr");
+            const $expireCell = $row.find("td").eq(2);
+            const $editBtn = $row.find(".edit_courses");
+            const newDate = $expireCell.find("input").val();
+            $expireCell.text(newDate);
+            const learner_id = $saveBtn.data("leaner_id");
+            const course_id = $saveBtn.data("course_id");
+            const user_id = $saveBtn.data("user_id");
+            const url = "{{ route('learners.courses.editExpirationDate', ['id' => ':id']) }}".replace(':id', learner_id);
+            $.ajaxSetup({
+                headers: { "X-CSRF-TOKEN": '{{ csrf_token() }}' }
+            });
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    course_id: course_id,
+                    learner_id: learner_id,
+                    user_id: user_id,
+                    new_expire_date: newDate
+                },
+                success: function (data) {
+                    console.log(data);
+                    Swal.fire("Updated!", data, "success");
+                    $expireCell.text(newDate);
+                    // $row.find("td").last().html(`<button class="btn btn-sm btn-primary edit_courses" data-leaner_id="${learner_id}" data-course_id="${course_id}" data-user_id="${user_id}">Edit</button>`);
+                    lastEditedRow = null;
+                    lastExpireDate = "";
+                    $saveBtn.hide();
+                    $editBtn.show();
+                    lastEditedRow = null;
+                    lastExpireText = "";
+                },
+                error: function () {
+                    Swal.fire("Error", "Could not update expiration date", "error");
+                }
+            });
+        });
+
+
+       $('#tbl_learners').on('draw.dt', function () {
+            var page = table_learner.page.info().page + 1;
+
+            $('#tbl_learners').find('.edit_learner_user').each(function () {
+                var href = $(this).attr('href');
+                if (href.indexOf('?') > -1) {
+                    href = href.replace(/([?&])page=\d+/, '$1page=' + page);
+                } else {
+                    href += '?page=' + page;
+                }
+                $(this).attr('href', href);
+            });
+        });
+        // $(document).on("click", ".edit_learner_user", function () {
+        //     var page = $('#example').DataTable().page();
+        //     var id = $(this).data('id');
+        //     window.location.href = '/edit/' + id + '?page=' + (page + 1);
+
+
+        //     const $editBtn = $(this);
+        //     const $row = $editBtn.closest("tr");
+        //     const $expireCell = $row.find("td").eq(2); // Assuming 3rd column has date
+        //     const $saveBtn = $row.find(".save_courses");
+        //     if (lastEditedRow && !lastEditedRow.is($row)) {
+        //         lastEditedRow.find("td").eq(2).text(lastExpireText);
+        //         lastEditedRow.find(".save_courses").hide();
+        //         lastEditedRow.find(".edit_learner_user").show();
+        //     }
+        //     lastEditedRow = $row;
+        //     lastExpireText = $expireCell.text().trim();
+        //     hasDateChanged = false;
+        //     $expireCell.html(`<input type="text" class="form-control form-control-sm expire-datepicker" value="${lastExpireText}" />`);
+        //     const $input = $row.find(".expire-datepicker");
+
+        //     $input.datepicker({
+        //         dateFormat: "dd-mm-yy",
+        //         onSelect: function () {
+        //             hasDateChanged = true;
+        //         }
+        //     }).datepicker("show");
+        //     $input.on("blur", function () {
+        //         setTimeout(() => {
+        //             if (!hasDateChanged && lastEditedRow && lastEditedRow.is($row)) {
+        //                 $expireCell.text(lastExpireText);  // Revert
+        //                 $saveBtn.hide();
+        //                 $editBtn.show();
+        //                 lastEditedRow = null;
+        //                 lastExpireText = "";
+        //             }
+        //         }, 200);
+        //     });
+        //     $editBtn.hide();
+        //     $saveBtn.show();
+        // });
+
 
         function copyUrl(url) {
             console.time('time1');

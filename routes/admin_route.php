@@ -148,6 +148,7 @@ Route::prefix('backoffice')->group(function () {
             Route::post('faq/restore_all', 'restore_all');
             Route::delete('faq/delete/{id}', 'delete')->name('faq.delete');
             Route::post('faq/bulk_hard_del', 'bulk_Hard_Delete');
+            Route::post('faq/{id}/delete-media','deleteMedia')->name('faq.delete-media');
         });
         //
         //Learners Route
@@ -360,6 +361,7 @@ Route::prefix('backoffice')->group(function () {
 
             Route::delete('courses/learners/delete/{id}', 'learner_delete')->name('courses.learners.delete');
             Route::delete('learners/courses/delete/{id}', 'learnerCourseDelete')->name('learners.courses.delete');
+            Route::post('learners/courses/edit-expiration-date/{id}', 'learnerCourseEditExpirationDate')->name('learners.courses.editExpirationDate');
             Route::get('course/get_addable_learners/{courseId}', 'get_addable_learners')->name('course.get_addable_learners');
             Route::get('addable/learners/{courseId}/{learnerId}/{planId?}', 'addable_learners')->name('addable.learners');
             Route::get('delete_addable/learners/{id}', 'delete_addable_learners')->name('delete_addable.learners');

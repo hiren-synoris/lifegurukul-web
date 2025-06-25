@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('right-section')
-    {!! redirect_to_back(route('learners.index')) !!}
+    <a href="{{ url('backoffice/learners?page=' . request('page', 1)) }}" class=" btn btn-warning px-2 py-1"><i class="fas fa-arrow-circle-left pr-2"></i> Back</a>
 @endsection
 @section('content')
 <style>
@@ -21,6 +21,7 @@
                     <form method="POST" id="form_submit" action="{{ url('backoffice/learners/' . $learner->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
+                        <input type="hidden" name="page" value="{{ request('page') }}">
                         <div class="d-flex justify-content-center mb-3">
                             <h3>{{ !isset($pg_header) && !empty($pg_header) ? $pg_header : 'Edit ' . ucwords($learner->name) }}</h3>
                         </div>

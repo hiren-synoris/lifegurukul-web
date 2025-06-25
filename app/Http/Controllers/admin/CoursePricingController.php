@@ -264,8 +264,8 @@ class CoursePricingController extends Controller
             //         $planType = CoursePlan::PLAN_RECURRING;
             //     }
             // }
-
-            /*if(isset($request['limit_course']) && $request['limit_course'] == 'on'){
+            // $name = isset($request['name']) && !empty($request['name']) ? $request['name'] : '';
+            if(isset($request['limit_course']) && $request['limit_course'] == 'on'){
             $limit_course = 1;
             // if(isset($request['fixed_date']) && $request['fixed_date'] != "on" && (!empty($request['edit_fixed_date']) || $request['edit_fixed_date'] != NULL )){
             //     $is_fixed_date = 1;
@@ -295,7 +295,7 @@ class CoursePricingController extends Controller
             $limit_course = 0;
             $is_fixed_date = 0;
             $access_value = NULL;
-            }*/
+            }
             /*// for recurring only if plan is not created
             if($planType == CoursePlan::PLAN_RECURRING && $coursePlan->plan_id == NULL){
             // create Plan
@@ -316,7 +316,8 @@ class CoursePricingController extends Controller
             $coursePlan->plan_name = request()->has('plan_name') ? $request->plan_name : null;
             // $coursePlan->list_price = request()->has('edit_list_price') ? $request->edit_list_price : 0.00;
             // $coursePlan->final_payable_price = $edit_final_payable_price;
-            // $coursePlan->course_limit = $limit_course;
+            $coursePlan->course_limit = $limit_course;
+            // $coursePlan->name = $name;
             // $coursePlan->is_fixed_date = $is_fixed_date;
             // $coursePlan->access_value = $access_value;
             // $coursePlan->price = isset($request['edit_price']) && !empty($request['edit_price']) ? $request['edit_price'] : 0.00;

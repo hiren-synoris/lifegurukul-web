@@ -237,12 +237,14 @@ class IndexController extends Controller
         $trusted_by = Dropdown::where('slug', 'trusted_by')->with(['dropdownOptions' => function ($query) {
             $query->where('status', true);
         }])->where('status', true)->first();
-        if (!$slider->autoplay) {
-            $slider->load(['slides' => function ($query) {
-                return $query->first();
-            }]);
-        } else {
-            $slider->load(['slides']);
+        if ($slider) {
+            if (!$slider->autoplay) {
+                $slider->load(['slides' => function ($query) {
+                    return $query->first();
+                }]);
+            } else {
+                $slider->load(['slides']);
+            }
         }
         $review = RatingReview::where("home_status", 1)->with("learner:id,name,profile_pic", "course:id,title")->get();
         // $this->sessionDestroy();

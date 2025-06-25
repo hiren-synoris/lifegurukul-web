@@ -46,8 +46,8 @@ class SliderController extends Controller
     {
         if (!$this->user->can('add_slider')) abort(403);
         $sliders = Slider::whereNull('deleted_at')->select('id','name')->get();
-        if (view()->exists('admin.slider.add')) {
-            return view('admin.slider.add',compact('sliders'));
+        if (view()->exists('admin.slider.create')) {
+            return view('admin.slider.create',compact('sliders'));
         }
         abort(404);
     }
@@ -78,8 +78,10 @@ class SliderController extends Controller
             'c2au.*' => 'nullable',
             'newwin.*' => 'sometimes',
             // 'img.*' => 'required|dimensions:max_width=1919,max_height=580',
-            'img.*' => 'required|mimes:jpg,png,jpeg,svg',
-            'slider_image_mobile.*' => 'required|mimes:jpg,png,jpeg,svg',
+            // 'img.*' => 'required|mimes:jpg,png,jpeg,svg',
+            // 'slider_image_mobile.*' => 'required|mimes:jpg,png,jpeg,svg',
+            'img.*' => 'required|mimes:jpg,jpeg,png,svg,gif,mp4,webm,mov,ogg',
+            'slider_image_mobile.*' => 'required|mimes:jpg,jpeg,png,svg,gif,mp4,webm,mov,ogg',
             'name' => 'required|filled|unique:sliders,name',
             'autoplay' => 'sometimes',
             'slug' => 'required_with:name'
@@ -224,7 +226,7 @@ $notification['type'] = "sweet-alert";
         $slider=Slider::where('id',$id)->with('slides')->first();
         $courses = Course::all();
 
-        return view('admin.slider.edit',compact('slider','courses'));
+        return view('admin.slider.update',compact('slider','courses'));
     }
 
     /**
@@ -237,7 +239,9 @@ $notification['type'] = "sweet-alert";
     public function update(Request $request, $id)
     {
         // dd($request->all());
-        $has = count(json_decode($request->total));
+        $total_json = json_decode($request->total, true);
+        $has = is_array($total_json) ? count($total_json) : 0;
+        // $has = count(json_decode($request->total));
         $total1 = $has > 0 ? str_replace(['[',']'],'',explode(',',$request->total)):$has;
         $total2 = $has > 0 ? (int)($has) : $has;
         $total_slide = (int)($request->total_slide);
@@ -277,9 +281,11 @@ $notification['type'] = "sweet-alert";
             'img' => 'sometimes|nullable|array',
             'slider_image_mobile' => 'sometimes|nullable|array',
             // 'img.*' => 'nullable|mimes:jpg,png,jpeg,svg|dimensions:max_width=1920,max_height=700',
-            'img.*' => 'nullable|mimes:jpg,png,jpeg,svg',
+            // 'img.*' => 'nullable|mimes:jpg,png,jpeg,svg',
             // 'slider_image_mobile.*' => 'nullable|mimes:jpg,png,jpeg,svg|dimensions:max_width=480,max_height=256',
-            'slider_image_mobile.*' => 'nullable|mimes:jpg,png,jpeg,svg',
+            // 'slider_image_mobile.*' => 'nullable|mimes:jpg,png,jpeg,svg',
+            'img.*' => 'required|mimes:jpg,jpeg,png,svg,gif,mp4,webm,mov,ogg|max:51200', // max 50MB
+            'slider_image_mobile.*' => 'required|mimes:jpg,jpeg,png,svg,gif,mp4,webm,mov,ogg|max:51200',
             'name' => 'required|filled|unique:sliders,name,'.$id,
             'autoplay' => 'sometimes',
             'slug' => 'required_with:name',
@@ -288,11 +294,11 @@ $notification['type'] = "sweet-alert";
             // 'transparent'=> 'sometimes|present|array',
         ],
         [
-            // 'img' => "Image is required",
-            'img.*.image' => 'File must be an image',
+            'img' => "Image is required",
+            // 'img.*.image' => 'File must be an image',
             // 'img.*.dimensions' => 'All Image Dimention should be 1920*700',
          //   'img.*.mimes' => 'File must be either jpg or png',
-            'slider_image_mobile.*.image' => 'All Mobile Image must be an image',
+            // 'slider_image_mobile.*.image' => 'All Mobile Image must be an image',
             // 'slider_image_mobile.*.dimensions' => 'All Mobile Image Dimention should be 480*256',
             'slider_image_mobile.*.mimes' => 'All Mobile File must be either jpg or png'
         ]);
@@ -357,9 +363,9 @@ for ($i=$start; $i <= $y; $i++) {
     $mobile_img_flg = false;
     $path = NULL;
     // $mobile_path = NULL;
-    // $caption1 = NULL;
+    $caption1 = NULL;
     // $direction = false;
-    // $caption2 = NULL;
+    $caption2 = NULL;
     // $c2a = NULL;
     $c2au = NULL;
     $newwin = false;
@@ -372,9 +378,9 @@ for ($i=$start; $i <= $y; $i++) {
     //dd($request->caption1[$i]);
     if(isset($request->img[$i]) && !empty($request->img[$i])) $flg=true;
     if(isset($request->slider_image_mobile[$i]) && !empty($request->slider_image_mobile[$i])) $mobile_img_flg=true;
-    // if(isset($request->caption1[$i]) && $request->has('caption1')) $caption1 = $request->caption1[$i];
+    if(isset($request->caption1[$i]) && $request->has('caption1')) $caption1 = $request->caption1[$i];
     // if(isset($request->caption1_text_color[$i]) && $request->has('caption1_text_color')) $caption1_text_color = $request->caption1_text_color[$i];
-    // if(isset($request->caption2[$i]) && $request->has('caption2')) $caption2 = $request->caption2[$i];
+    if(isset($request->caption2[$i]) && $request->has('caption2')) $caption2 = $request->caption2[$i];
     // if(isset($request->caption2_text_color[$i]) && $request->has('caption2_text_color')) $caption2_text_color = $request->caption2_text_color[$i];
     // if(isset($request->direction[$i]) && $request->has('direction')) $direction = $request->direction[$i] == 'left' ? false : true;
     // if(isset($request->c2a[$i]) && $request->has('c2a')) $c2a = $request->c2a[$i];
@@ -404,8 +410,8 @@ for ($i=$start; $i <= $y; $i++) {
 $data1=[
     'slider_id' => $id,
 
-    // 'caption1' => $caption1,
-    // 'caption2' => $caption2,
+    'caption1' => $caption1,
+    'caption2' => $caption2,
     // 'direction' => $direction,
     // 'action_text' => $c2a,
     'action_url' => $c2au,

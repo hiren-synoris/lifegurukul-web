@@ -1321,6 +1321,43 @@ class CourseController extends Controller
         return response()->json("Unenrolled successfully");
     }
     /**
+     * Update the specified Date For particular user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+    */
+    public function learnerCourseEditExpirationDate(Request $request, $id)
+    {
+        try{
+            $rawDate = trim($request->new_expire_date); //  "23-12-2025"
+            $newExpireDate = Carbon::createFromFormat('d-m-Y', $rawDate)->format('Y-m-d');  //2025-12-23
+            if (!empty($id) ) {
+                $userCourse = UserCourse::where('id', $request->user_id)
+                    ->where('learner_id', $id)
+                    ->where('course_id', $request->course_id)
+                    ->first();
+                if ($userCourse && !empty($userCourse)) {
+                    $userCourse->expire_at = $newExpireDate;
+                    $userCourse->save();
+                }
+                $notification['type'] = "sweet-alert";
+                $notification['status'] = "success";
+                $notification['title'] = "Success";
+                $notification['msg'] = "Expiration Date Change successfully";
+                return response()->json("Expiration Date successfully");
+            }else{
+                $notification['type'] = "sweet-alert";
+                $notification['status'] = "errors";
+                $notification['title'] = "Errors";
+                $notification['msg'] = "Expiration Date Change Can't Update";
+                return response()->json("Expiration Date Change Can't Update");
+            }
+        } catch (\Exception $e) {
+            return response()->json("Error: " . $e->getMessage(), 500);
+        }
+    }
+    /**
      * Course > Course builder section
      * @return View OR 404
      */

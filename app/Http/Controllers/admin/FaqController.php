@@ -11,7 +11,7 @@ use App\Helper\Helper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-
+use Illuminate\Support\Facades\Storage;
 class FaqController extends Controller
 {
     public function __construct()
@@ -54,12 +54,15 @@ class FaqController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request);
         if (!$this->user->can('add_faq')) abort(403);
         $notification = [];
         $data=[];
         $validated = $request->validate([
             'question' => ['required','filled'],
             'answer'=> 'required',
+            'media'    => 'nullable|array',
+            'media.*'  => 'file|mimes:jpg,jpeg,png,gif,svg,mp4,webm,mov,ogg|max:51200',
             // 'order'=> ['required','filled']
         ]);
         try {
@@ -71,6 +74,13 @@ class FaqController extends Controller
             //     $notification['msg'] = "Order already exist.";
             //     return Redirect()->back()->withInput()->with('notification', $notification);
             // }
+            $mediaPaths = [];
+            if ($request->hasFile('media')) {
+                foreach($request->file('media') as $file) {
+                    $path = $file->store('faqs', 'public');
+                    $mediaPaths[] = $path;
+                }
+            }
 
             $user=Auth()->user();
             Faq::create([
@@ -78,6 +88,7 @@ class FaqController extends Controller
                 'answer'=>$request->answer,
                 'status' => $request->status ? 1 : 0,
                 'order'=>$request->order,
+                'media'      => json_encode($mediaPaths),
                 'created_by'=>$user->id
             ]);
         } catch (\Throwable $th) {
@@ -141,8 +152,18 @@ class FaqController extends Controller
         $validated = $request->validate([
             'question' => ['required','filled'],
             'answer'=> 'required',
+            'media'    => 'nullable|array',
+            'media.*'  => 'file|mimes:jpg,jpeg,png,gif,svg,mp4,webm,mov,ogg|max:51200',
             // 'order' => 'required|filled'
         ]);
+        $mediaPaths = [];
+        if ($request->hasFile('media')) {
+            foreach($request->file('media') as $file) {
+                $path = $file->store('faqs', 'public');
+                $mediaPaths[] = $path;
+            }
+            $faq->media = json_encode($mediaPaths);
+        }
         $user=Auth()->user();
         $faq->question = allowWhiteSpace($request->question);
         $faq->answer = $request->answer;
@@ -349,5 +370,39 @@ class FaqController extends Controller
             $notification['msg'] = "No FAQ selected";
         }
         return redirect()->back()->with('notification', $notification);
+    }
+    /**
+     * Remove Media From storage and table.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteMedia(Request $request, $id)
+    {
+        if (!$this->user->can('edit_faq')) abort(403);
+        $faq = Faq::findOrFail($id);
+        if ($faq->media) {
+            $mediaFiles = json_decode($faq->media, true);
+            $mediaToDelete = $request->media_path;
+
+            $mediaFiles = array_filter($mediaFiles, function ($item) use ($mediaToDelete) {
+                return $item !== $mediaToDelete;
+            });
+            if (Storage::disk('public')->exists('faqs/'.$mediaToDelete)) {
+                Storage::disk('public')->delete('faqs/'.$mediaToDelete);
+            }
+            $faq->media = json_encode(array_values($mediaFiles));
+            $faq->updated_by = auth()->id();
+            $faq->deleted_by = auth()->id();
+            $faq->save();
+            return response()->json([
+                'status' => 'success',
+                'msg'    => 'Media deleted successfully',
+            ]);
+        }
+        return response()->json([
+            'status' => 'error',
+            'msg'    => 'Media not found!',
+        ]);
     }
 }

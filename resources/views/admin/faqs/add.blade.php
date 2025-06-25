@@ -51,6 +51,13 @@
       @enderror
         </div>
         <div class="form-group">
+            <label for="question">Media</label>
+          <input type="file" class="form-control" name="media[]" id="media" accept="image/*,video/*" multiple>
+            @error('question')
+            <div class="text text-danger">{{ $video }}</div>
+            @enderror
+        </div>
+        <div class="form-group">
           {{-- <div class="col-3 swich-area">
               <label for="status">Status</label>
               <input type="checkbox" name="status" id="status" data-on-text="Active" data-off-text="In Active" data-off-color="danger" data-on-color="success" checked data-bootstrap-switch>

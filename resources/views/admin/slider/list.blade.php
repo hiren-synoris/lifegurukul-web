@@ -5,6 +5,7 @@
     ?>
 @endsection
 @section('content')
+    <a  href="{{ url('backoffice/slider/create') }}" class="btn btn-primary">Add New</a>
     <!-- Contain Bulk delete abd restore all functionalities-->
     @if(Auth::user()->hasRole('admin'))
     <div style="display: none;" id="blk_del_frm">

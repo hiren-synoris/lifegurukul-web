@@ -127,6 +127,8 @@ class LearnerController extends Controller
             $url = route("learners.courses.delete", ["id" => $userCourse->id]);
             if ($this->user->can('delete_courses')) {
                 // $actions .= '<a class="mx-1 text-danger" title="Delete" type="button" href="javascript:void(0)" onclick=delete_confirmation("' . $url . '")><i class="fas fa-trash-alt"></i></a>';
+                $actions .= '<a class="mx-1 text-warning edit_courses" data-leaner_id=' . $userCourse->learner_id . ' title="Edit" type="button"  data-course_id='. $userCourse->course_id.' data-user_id='. $userCourse->id.'  ><i class="fas fa-pencil"></i></a>';
+                $actions .= '<a class="mx-1 text-warning save_courses" data-leaner_id=' . $userCourse->learner_id . ' title="Save" type="button"  data-course_id='. $userCourse->course_id.' data-user_id='. $userCourse->id.'  style="display:none;"><i class="fas fa-save"></i></a>';
                 $actions .= '<a class="mx-1 text-danger delete_courses" data-leaner_id=' . $userCourse->learner_id . ' title="Delete" type="button"  data-course_id='. $userCourse->course_id.' data-user_id='. $userCourse->id.'  ><i class="fas fa-trash-alt"></i></a>';
             }
 
@@ -941,7 +943,8 @@ class LearnerController extends Controller
                 }
 
                 if ($this->user->can('edit_learners')) {
-                    $button .= '<a class="mx-1" title="Edit" href="' . url($path . $row->id . '/edit') . '"><i class="fas fa-edit"></i></a>';
+                    $button .= '<a class="mx-1 edit_learner_user" title="Edit" href="' . url($path . $row->id . '/edit') . '?page=' . request()->get('page', 1) . '"> <i class="fas fa-edit"></i></a>';
+                    // $button .= '<a class="mx-1 edit_learner_user" title="Edit" href="' . url($path . $row->id . '/edit') . '"><i class="fas fa-edit"></i></a>';
                 }
 
                 if ($this->user->can('edit_learners')) {
