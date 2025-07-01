@@ -45,7 +45,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-
+use Spatie\SimpleExcel\SimpleExcelWriter;
 class LearnerController extends Controller
 {
     public function __construct()
@@ -2212,6 +2212,101 @@ class LearnerController extends Controller
         }
 
         return response()->json(["status" => 1]);
+    }
+
+    public function exportCSV()
+    {
+        ini_set('max_execution_time', 0);
+        set_time_limit(0);
+
+        $filename = 'learners_' . now()->timestamp . '.csv';
+
+        return response()->stream(function () {
+            $handle = fopen('php://output', 'w');
+
+            // CSV Header
+            fputcsv($handle, ['Learner Name', 'Course Name', 'Chapter Name', 'Device Name', 'Device ID']);
+
+            \App\Models\LearnerLog::with(['learner', 'course', 'chapter'])
+                ->orderBy('id')
+                ->chunkById(1000, function ($logs) use ($handle) {
+                    foreach ($logs as $log) {
+                        fputcsv($handle, [
+                            optional($log->learner)->name ?? 'N/A',
+                            optional($log->course)->title ?? 'N/A',
+                            optional($log->chapter)->name ?? 'N/A',
+                            $log->device_name,
+                            $log->device_id,
+                        ]);
+                    }
+                    ob_flush();
+                    flush();
+                });
+
+            fclose($handle);
+        }, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+
+
+    public function exportLearnersCSV()
+    {
+        ini_set('max_execution_time', 0);
+        set_time_limit(0);
+
+        $filename = 'learners_' . now()->timestamp . '.csv';
+
+        return response()->stream(function () {
+            $handle = fopen('php://output', 'w');
+
+            // ✅ CSV Header matching selected fields
+            fputcsv($handle, [
+                'ID', 'Name', 'Mobile', 'Email', 'Gender', 'DOB', 'Country ID', 'State ID',
+                'City ID', 'Expire At', 'Occupation', 'Marital Status', 'Education',
+                'Your Interests', 'Learner Status'
+            ]);
+
+            \App\Models\Learner::select(
+                'id', 'name', 'mobile', 'email', 'gender', 'd_o_b',
+                'country_id', 'state_id', 'city_id', 'expire_at',
+                'occupation', 'marital_status', 'education',
+                'your_interests', 'learner_status'
+            )
+            ->orderBy('id')
+            ->chunkById(1000, function ($rows) use ($handle) {
+                foreach ($rows as $row) {
+                    fputcsv($handle, [
+                        $row->id,
+                        $row->name,
+                        $row->mobile,
+                        $row->email,
+                        $row->gender,
+                        $row->d_o_b,
+                        $row->country->name,
+                        $row->state->name,
+                        $row->city->name,
+                        $row->expire_at,
+                        $row->occupation,
+                        $row->marital_status,
+                        $row->education,
+                        $row->your_interests,
+                        $row->learner_status,
+                    ]);
+                }
+
+                ob_flush();
+                flush();
+            });
+
+            fclose($handle);
+        }, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'no-store, no-cache',
+        ]);
     }
 
     public function userActivityLogs(Request $request)

@@ -192,6 +192,9 @@ Route::prefix('backoffice')->group(function () {
             Route::get('user-activity-logs', 'userActivityLogs')->name('user-activity-logs');
             Route::get('user-logs-activity-export', 'userLogsActivityExport')->name('user-logs-activity-export');
             Route::get('learner_status', 'learnerStatus')->name("learner_status");
+            Route::get('user-activity-export', 'exportCSV')->name('export_csv');
+            Route::get('/export-learners-csv', [LearnerController::class, 'exportCSV'])->name('learners.export.csv');
+            Route::get('/export-learners', [LearnerController::class, 'exportLearnersCSV'])->name('learners.export');
         });
         //Sub Admin Route
         Route::resource('/subadmin', UserController::class);

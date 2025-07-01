@@ -31,4 +31,18 @@ class LearnerLog extends Model
         'created_at' => 'datetime:Y-m-d\TH:i:sT',
         'updated_at' => 'datetime:Y-m-d\TH:i:sT'
     ];
+
+    public function learner()
+    {
+        return $this->belongsTo(Learner::class, 'learner_id');
+    }
+
+    public function chapter()
+    {
+        return $this->belongsTo(Chapter::class, 'chapter_id');
+    }
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
 }

@@ -133,6 +133,16 @@ class DashboardController extends Controller
                 $query->where('instructor_id', auth()->id());
             })->where("type",2)->count();
 
+        $lastCourses = Course::whereNull('deleted_by')
+            ->whereNull('deleted_at')
+            ->when(auth()->user()->hasRole(User::INSTRUCTOR), function ($query) {
+                $query->where('instructor_id', auth()->id());
+            })
+            ->where("type", 1)
+            ->latest('id')
+            ->take(10)
+            ->select('id','title', 'instructor_name','image','default_web_price','default_iphone_price','default_android_price')
+            ->get();
         $instructors = Instructors::whereNull('deleted_by')->whereNull('deleted_at')->count();
         $total = DeviceToken::count();
         // $android = DeviceToken::selectRaw('COUNT(DISTINCT device_token) as count')->where("device_type",1)->first()->count;

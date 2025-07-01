@@ -23,13 +23,17 @@
 @includeIf('admin.layouts.partials.actions.bulk-delete-data', [
     'bulkDelURL' => url('backoffice/usercourses/bulk_del'),
     ])
-
+@includeIf('admin.layouts.partials.actions.bulk-delete-data', [
+    'bulkDelURL' => url('backoffice/usercourses/bulk_del'),
+    ])
     @php
         use Carbon\Carbon;
         $plans = $course->plans()->count();
     @endphp
 
+    {{-- <button class="btn btn-primary float-right export_csv_learner px-2 py-1 mr-1" id="import-sample"><i class="fa fa-download" aria-hidden="true"></i> Export CSV</button> --}}
      <button class="btn btn-warning float-right export_complete_learner px-2 py-1 mr-1" id="import-sample"><i class="fa fa-download" aria-hidden="true"></i> Usage Reports</button>
+        <a href="{{ route('learners.export') }}" class="btn btn-primary"> <i class="fa fa-download" aria-hidden="true"></i>Export CSV</a>
      @if(Session::has('msg'))
      <h2 class="text text-success text-center w-50">{{ Session::get('msg') }}</h2>
      @endif

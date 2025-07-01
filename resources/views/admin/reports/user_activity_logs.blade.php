@@ -29,7 +29,11 @@
             {{ session('status') }}
         </div>
     @endif
-    <div class=""><button class='btn btn-primary text-white export_learner float-right'>Export</button></div>
+    <div class="">
+        <button class='btn btn-primary text-white export_learner float-right'>Export</button>
+        {{-- <button class='btn btn-primary text-white export_csv float-right'>Export CSV</button> --}}
+        <a href="{{ route('learners.export.csv') }}" class="btn btn-primary">Export Learners CSV</a>
+    </div>
     <div class="col-12 d-flex align-items-center ">
         <div class="col-4">
 
